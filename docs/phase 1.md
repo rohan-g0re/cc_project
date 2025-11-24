@@ -388,3 +388,102 @@ Once you send me those results, we’ll move to **Phase 2**, where we’ll:
 [2]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-getting-started.html?utm_source=chatgpt.com
 [3]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-indexes.html?utm_source=chatgpt.com
 [4]: https://docs.aws.amazon.com/AmazonS3/latest/API/API_S3VectorBuckets_CreateIndex.html?utm_source=chatgpt.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+gj349wytow37hf9047t45-999999999999999999999998)(^&&&&&&&&&&&&&&&W&)REW(&E^W)(&RYE&(NFHE&R)^W)
+
+
+
+
+Nice, let’s wrap the remaining bits into **5 clear tasks** you can tick off.
+
+---
+
+## Task 1 – Set up local project structure
+
+**Goal:** Have a clean repo that matches the architecture.
+
+* Create a project folder (e.g. `cloud-rag/`).
+* Inside it create:
+
+  * `lambdas/index_pdf/`
+  * `lambdas/chunk_embed/`
+  * `lambdas/query_rag/`
+  * `lambdas/gemini_llm/`
+  * `utils/` (for shared code later).
+* Optionally `git init` and make an initial commit.
+
+---
+
+## Task 2 – Create `paper-texts` S3 bucket (for extracted text)
+
+**Goal:** Have a home for raw extracted text before chunking/embedding.
+
+* In S3 console, create a new standard bucket, e.g. `paper-texts-rohan-dev` in **us-east-1**.
+* Keep “Block all public access” ON.
+* This bucket will be where `IndexPdfLambda` writes `paper_id.txt` files.
+
+---
+
+## Task 3 – Enable Bedrock Titan Embeddings access
+
+**Goal:** Make sure your account is allowed to call the embedding model.
+
+* Open **Amazon Bedrock** console → “Model access”.
+* Find **“Amazon Titan Text Embeddings V2”** (or similar).
+* Turn **access ON** for your region (us-east-1).
+* Save/confirm so later your Lambda + `AmazonBedrockFullAccess` policy can actually invoke it.
+
+---
+
+## Task 4 – Store `GEMINI_API_KEY` in Secrets Manager
+
+**Goal:** Stop hardcoding the Gemini key; read it securely from AWS.
+
+* Open **Secrets Manager** → “Store a new secret”.
+* Choose “Other type of secret”.
+* Add key `GEMINI_API_KEY` with your actual key as value.
+* Name the secret something like `gemini/api-key/dev`.
+* Later, `GeminiLambda` will `GetSecretValue` to grab this.
+
+---
+
+## Task 5 – Wire up Lambda skeletons & S3 trigger
+
+**Goal:** Finish the basic Lambda plumbing.
+
+* In Lambda console:
+
+  * You already have `IndexPdfLambda` → keep it.
+  * Create three **stub** functions:
+
+    * `ChunkAndEmbedLambda`
+    * `QueryRagLambda`
+    * `GeminiLambda`
+  * All use runtime **Python 3.12** and execution role `rag-lambda-exec-role`.
+  * Each stub just logs `"I am alive"` and returns 200.
+* In S3 console:
+
+  * Open `paper-pdfs-*` bucket → Properties → Event notifications.
+  * Add an event notification for `ObjectCreated` → target: `IndexPdfLambda`.
+  * Upload a small dummy PDF and confirm in CloudWatch Logs that `IndexPdfLambda` was invoked.
+
+---
+
+When you’re ready, tell me **which task you want to start with**, and I’ll walk you through that one step-by-step in console (like we did before).

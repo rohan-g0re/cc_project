@@ -47,9 +47,9 @@ just to inform you that I did the decoupling of second lambda into query lambda 
 
 # 2
 
-I AM NEW TO AWS and dont know anything about it - JUST CREATED AN AWS account 
+I AM NEW TO AWS and dont know anything about it - JUST CREATED AN AWS account -->  I have completed Phase 1 of this plan and attached its documentation below
 
-Lets start with the PHASE 1 of implementation -->
+Lets start with the PHASE 2 of implementation -->
 
 ******
 <ADMIN_COMMANDS>
