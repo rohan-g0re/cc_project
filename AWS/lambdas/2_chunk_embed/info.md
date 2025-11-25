@@ -1,3 +1,17 @@
+## Comments
+
+
+## Environment variables for this lambda
+
+```
+1. BEDROCK_REGION
+2. VECTOR_BUCKET
+3. VECTOR_INDEX
+```
+
+
+## Cloudshell commands to see vectors
+
 #### 1. IF you want to see vectors
 
 **CODE:** 
