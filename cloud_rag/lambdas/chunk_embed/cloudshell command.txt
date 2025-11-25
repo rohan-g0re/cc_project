@@ -1,3 +1,5 @@
+
+
 aws s3vectors list-vectors \
   --vector-bucket-name paper-vectors-rohan-dev \
   --index-name paper-chunks \
