@@ -1,21 +1,19 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent } from "react";
-import { useApiBaseUrl } from "../lib/useApiBaseUrl";
+import { useUploadToLibrary } from "../lib/useUploadToLibrary";
 
-interface UploadResponse {
-  bucket: string;
-  key: string;
-  message: string;
-}
+type UploadCardProps = {
+  onResourceAdded?: (title: string) => void;
+};
 
-export default function UploadCard() {
-  const API_BASE_URL = useApiBaseUrl();
+export default function UploadCard({ onResourceAdded }: UploadCardProps) {
+  const { upload, isUploading, error, response, resetResponse, clearError } =
+    useUploadToLibrary();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [response, setResponse] = useState<UploadResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const activeError = localError ?? error;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selected = event.target.files?.[0] ?? null;
@@ -25,13 +23,14 @@ export default function UploadCard() {
     }
 
     if (!selected.name.toLowerCase().endsWith(".pdf")) {
-      setError("Only PDF files are allowed.");
+      setLocalError("Only PDF files are allowed.");
       setFile(null);
       return;
     }
 
-    setError(null);
-    setResponse(null);
+    setLocalError(null);
+    resetResponse();
+    clearError();
     setFile(selected);
   };
 
@@ -43,52 +42,30 @@ export default function UploadCard() {
     if (!dropped) return;
 
     if (!dropped.name.toLowerCase().endsWith(".pdf")) {
-      setError("Only PDF files are allowed.");
+      setLocalError("Only PDF files are allowed.");
       setFile(null);
       return;
     }
 
-    setError(null);
-    setResponse(null);
+    setLocalError(null);
+    resetResponse();
+    clearError();
     setFile(dropped);
   };
 
   const handleUpload = async (event: FormEvent) => {
     event.preventDefault();
     if (!file) {
-      setError("Choose a PDF to upload first.");
+      setLocalError("Choose a PDF to upload first.");
       return;
     }
 
-    setIsUploading(true);
-    setError(null);
-    setResponse(null);
-
+    setLocalError(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch(`${API_BASE_URL}/upload`, {
-        method: "POST",
-        body: formData
-      });
-
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        const message =
-          payload?.detail ||
-          `Upload failed with status ${res.status} ${res.statusText}`;
-        throw new Error(message);
-      }
-
-      const data = (await res.json()) as UploadResponse;
-      setResponse(data);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong while uploading.";
-      setError(message);
-    } finally {
-      setIsUploading(false);
+      const result = await upload(file);
+      onResourceAdded?.(result.title ?? file.name);
+    } catch {
+      // error state handled inside hook
     }
   };
 
@@ -160,9 +137,9 @@ export default function UploadCard() {
           </button>
         </div>
 
-        {error && (
+        {activeError && (
           <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-[11px] text-red-200">
-            {error}
+            {activeError}
           </p>
         )}
 

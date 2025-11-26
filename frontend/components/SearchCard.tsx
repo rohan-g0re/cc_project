@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useApiBaseUrl } from "../lib/useApiBaseUrl";
 
-type PaperResult = {
+export type PaperResult = {
   source: string;
   id: string;
   title: string;
@@ -13,7 +13,11 @@ type PaperResult = {
   abstract_snippet?: string;
 };
 
-export default function SearchCard() {
+type SearchCardProps = {
+  onAddToSession?: (paper: PaperResult) => void;
+};
+
+export default function SearchCard({ onAddToSession }: SearchCardProps) {
   const API_BASE_URL = useApiBaseUrl();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PaperResult[]>([]);
@@ -137,22 +141,33 @@ export default function SearchCard() {
                 </p>
               )}
 
-              <div className="mt-2 flex items-center justify-between gap-2">
-                {paper.url ? (
-                  <a
-                    href={paper.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] font-medium text-brand-300 hover:text-brand-200"
-                  >
-                    Open paper
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                ) : (
-                  <span className="text-[10px] text-slate-500">
-                    No external link available
-                  </span>
-                )}
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  {paper.url ? (
+                    <a
+                      href={paper.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-[10px] font-medium text-brand-300 hover:text-brand-200"
+                    >
+                      Open paper
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    <span className="text-[10px] text-slate-500">
+                      No external link available
+                    </span>
+                  )}
+                  {onAddToSession && (
+                    <button
+                      type="button"
+                      onClick={() => onAddToSession(paper)}
+                      className="rounded-full border border-slate-700/70 px-3 py-1 text-[10px] font-semibold text-slate-200 transition hover:border-brand-400 hover:text-brand-200"
+                    >
+                      Add to session
+                    </button>
+                  )}
+                </div>
                 <span className="text-[9px] text-slate-500">
                   ID:{" "}
                   <span className="font-mono text-[9px] text-slate-400">
