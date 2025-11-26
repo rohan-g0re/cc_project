@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-300">
                     Cloud Research
                   </p>
-                  <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                     Research paper hub
                   </h1>
                   <p className="mt-2 max-w-2xl text-sm text-slate-400">

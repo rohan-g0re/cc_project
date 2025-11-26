@@ -11,7 +11,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["system-ui", "ui-sans-serif", "sans-serif"]
+        sans: ["system-ui", "ui-sans-serif", "sans-serif"],
+        serif: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif"]
       },
       colors: {
         brand: {
